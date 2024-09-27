@@ -8,8 +8,9 @@ import java.util.*;
 import java.text.*;
 import java.net.*;
 import java.io.*;
-
-public class Server implements ActionListener {
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+public class Deadpool implements ActionListener {
     
     JTextField text;
     JPanel a1;
@@ -17,7 +18,8 @@ public class Server implements ActionListener {
     static JFrame f = new JFrame();
     static DataOutputStream dout;
     
-    Server() {
+    Deadpool()
+    {
         
         f.setLayout(null);
         
@@ -58,6 +60,33 @@ public class Server implements ActionListener {
         status.setForeground(Color.WHITE);
         status.setFont(new Font("SAN_SERIF", Font.BOLD, 14));
         p1.add(status);
+
+        ImageIcon i7 = new ImageIcon(ClassLoader.getSystemResource("icons/capture.png"));
+        Image i8 = i7.getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT);
+        ImageIcon i9 = new ImageIcon(i8);
+        JLabel capture = new JLabel(i9);
+        capture.setBounds(400, 20, 30, 30);
+        p1.add(capture);
+
+        capture.addMouseListener(new MouseAdapter() 
+        {
+            public void mouseClicked(MouseEvent ae) 
+            {
+                JFrame frameToCapture = (JFrame) SwingUtilities.getWindowAncestor(capture);
+                try {
+                    Robot robot = new Robot();
+                    Rectangle frameBounds = frameToCapture.getBounds();
+                    BufferedImage frameImage = robot.createScreenCapture(frameBounds);
+                    ImageIO.write(frameImage, "png", new File("deadpool_screenshot.png"));
+                    JOptionPane.showMessageDialog(null, "Screenshot saved successfully!");
+                } 
+                catch (IOException | AWTException ex) 
+                {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Error saving screenshot.");
+                }
+            }
+        });
         
         a1 = new JPanel();
         a1.setBounds(5, 75, 440, 570);
@@ -139,7 +168,7 @@ public class Server implements ActionListener {
     }
     
     public static void main(String[] args) {
-        new Server();
+        new Deadpool();
         
         try {
             ServerSocket skt = new ServerSocket(6001);
